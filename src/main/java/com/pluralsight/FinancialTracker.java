@@ -1,14 +1,11 @@
 package com.pluralsight;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.*;
 
 
 /*
@@ -78,8 +75,10 @@ public class FinancialTracker {
      * Load transactions from FILE_NAME.
      * • If the file doesn’t exist, create an empty one so that future writes succeed.
      * • Each line looks like: date|time|description|vendor|amount
+     *
+     * @return
      */
-    public static void loadTransactions(String fileName) {
+    public static ArrayList<Transaction> loadTransactions(String fileName) {
         // TODO: create file if it does not exist, then read each line,
         //       parse the five fields, build a Transaction object,
         //       and add it to the transactions list.
@@ -89,18 +88,19 @@ public class FinancialTracker {
 
             String csvLine;
             while ((csvLine = bufferedReader.readLine()) != null) {
-                String[] tokens = csvLine.split("\\|");
-                String date = tokens[0];
-                String name = tokens[1];
+                String[] tokens = csvLine.split("\\|");//ArrayList<String> tokens = new A
+                String date = tokens[0]; //or tokens.set(o)
+                String time = tokens[1];
                 String description = tokens[2];
                 String vendor = tokens[3];
-                String amount = tokens[4];
+                double amount = Double.parseDouble(tokens[4]);
+
 
                 // every token is text: convert the number
 
                 // One object per line, built from the three values
 
-                transactions.add(date, name, description, vendor, amount);
+                transactions.add(new Transaction(date, time, description, vendor, amount));
             }
             bufferedReader.close();
         } catch (Exception ex) {
@@ -119,7 +119,10 @@ public class FinancialTracker {
      * Store the amount as-is (positive) and append to the file.
      */
     private static void addDeposit(Scanner scanner) {
-        // TODO
+        // TODO]
+            System.out.println("Please enter the date ");
+
+
     }
 
     /**
