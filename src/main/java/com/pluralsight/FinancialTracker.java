@@ -3,6 +3,7 @@ package com.pluralsight;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -37,11 +38,13 @@ public class FinancialTracker {
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern(TIME_PATTERN);
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern(DATETIME_PATTERN);
 
+
     /* ------------------------------------------------------------------
        Main menu
        ------------------------------------------------------------------ */
     public static void main(String[] args) {
         loadTransactions(FILE_NAME);
+        System.out.println(transactions);
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -93,7 +96,7 @@ public class FinancialTracker {
                 String time = tokens[1];
                 String description = tokens[2];
                 String vendor = tokens[3];
-                double amount = Double.parseDouble(tokens[4]);
+                Double amount = Double.parseDouble(tokens[4]);
 
 
                 // every token is text: convert the number
@@ -105,7 +108,8 @@ public class FinancialTracker {
             bufferedReader.close();
         } catch (Exception ex) {
             System.out.println("Something went wrong!");
-            return transactions;
+        }
+        return transactions;
     }
 
     /* ------------------------------------------------------------------
@@ -120,7 +124,26 @@ public class FinancialTracker {
      */
     private static void addDeposit(Scanner scanner) {
         // TODO]
-            System.out.println("Please enter the date ");
+        System.out.println("Please enter the following information for your deposit:");
+        System.out.print("Description (a few words about the transactions");
+        String description = scanner.nextLine();
+        System.out.print("Enter the vendor (seller):");
+        String vendor = scanner.nextLine();
+        System.out.println("Enter amount to deposit");
+        Double amount = scanner.nextDouble();
+        if (!scanner.hasNextDouble() || amount < 0) {
+            System.out.println("Please enter positive numerical values only: ");
+            amount = scanner.nextDouble();
+        }
+        //String date = String.valueOf(LocalDate.now());
+
+
+
+
+
+
+
+
 
 
     }
@@ -132,6 +155,7 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
+
     }
 
     /* ------------------------------------------------------------------
@@ -222,7 +246,9 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     private static LocalDate parseDate(String s) {
         /* TODO – return LocalDate or null */
-        return null;
+        LocalDateTime timeLogged = LocalDateTime.now();
+        s = timeLogged.format(DATETIME_FMT);
+        return LocalDate.now();
     }
 
     private static Double parseDouble(String s) {
