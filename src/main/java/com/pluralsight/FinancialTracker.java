@@ -1,9 +1,12 @@
 package com.pluralsight;
 
+import java.io.*;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -135,7 +138,18 @@ public class FinancialTracker {
             System.out.println("Please enter positive numerical values only: ");
             amount = scanner.nextDouble();
         }
-        //String date = String.valueOf(LocalDate.now());
+        String date = String.valueOf(LocalDate.now());
+        LocalTime now = LocalTime.now();
+        String time = now.format(TIME_FMT);
+        transactions.add(new Transaction(date, time, description, vendor, amount));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+
+
 
 
 
@@ -246,8 +260,8 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     private static LocalDate parseDate(String s) {
         /* TODO – return LocalDate or null */
-        LocalDateTime timeLogged = LocalDateTime.now();
-        s = timeLogged.format(DATETIME_FMT);
+        //LocalDateTime timeLogged = LocalDateTime.now();
+        //s = timeLogged.format(DATETIME_FMT);
         return LocalDate.now();
     }
 
