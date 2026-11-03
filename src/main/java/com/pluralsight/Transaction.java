@@ -5,9 +5,9 @@ public class Transaction {
     private String time; //try localDateTime or Instant
     private String description;
     private String vendor;
-    private double amount;
+    private Double amount;
 
-    public Transaction(String date, String time, String description, String vendor, double amount) {
+    public Transaction(String date, String time, String description, String vendor, Double amount) {
         this.date = date;
         this.time = time;
         this.description = description;
@@ -47,11 +47,11 @@ public class Transaction {
         this.vendor = vendor;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
