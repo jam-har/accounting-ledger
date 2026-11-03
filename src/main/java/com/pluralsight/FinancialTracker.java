@@ -128,16 +128,17 @@ public class FinancialTracker {
     private static void addDeposit(Scanner scanner) {
         // TODO]
         System.out.println("Please enter the following information for your deposit:");
-        System.out.print("Description (a few words about the transactions");
+        System.out.print("Description (a few words about the transaction): ");
         String description = scanner.nextLine();
-        System.out.print("Enter the vendor (seller):");
+        System.out.print("Enter the vendor:");
         String vendor = scanner.nextLine();
-        System.out.println("Enter amount to deposit");
+        System.out.println("Enter amount to deposit:");
         Double amount = scanner.nextDouble();
         if (!scanner.hasNextDouble() || amount < 0) {
-            System.out.println("Please enter positive numerical values only: ");
+            System.out.println("Please enter positive numerical values only:");
             amount = scanner.nextDouble();
         }
+        scanner.nextLine();
         String date = String.valueOf(LocalDate.now());
         LocalTime now = LocalTime.now();
         String time = now.format(TIME_FMT);
@@ -149,17 +150,6 @@ public class FinancialTracker {
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
     }
 
     /**
@@ -169,6 +159,27 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
+        System.out.println("Please enter the following information for your payment:");
+        System.out.print("Description (a few words about the transaction):");
+        String description = scanner.nextLine();
+        System.out.print("Enter the vendor (seller):");
+        String vendor = scanner.nextLine();
+        System.out.println("Enter amount to pay:");
+        Double amount = scanner.nextDouble();
+        if (!scanner.hasNextDouble() || amount < 0) {
+            System.out.println("Please enter positive numerical values only: ");
+            amount = scanner.nextDouble();
+        }
+        amount = amount * -1;
+        String date = String.valueOf(LocalDate.now());
+        LocalTime now = LocalTime.now();
+        String time = now.format(TIME_FMT);
+        transactions.add(new Transaction(date, time, description, vendor, amount));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
 
     }
 
