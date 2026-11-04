@@ -47,6 +47,7 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     public static void main(String[] args) {
         loadTransactions(FILE_NAME);
+        Collections.reverse(transactions);
         System.out.println(transactions);
 
         Scanner scanner = new Scanner(System.in);
@@ -218,7 +219,7 @@ public class FinancialTracker {
     private static void displayDeposits() { /* TODO – only amount > 0               */
         for (int i = 0; i < transactions.size(); i++) {
             if (transactions.get(i).getAmount() > 0) {
-                System.out.println(transactions.get(i));
+                System.out.println(transactions.get(i).toString());
             }
         }
     }
