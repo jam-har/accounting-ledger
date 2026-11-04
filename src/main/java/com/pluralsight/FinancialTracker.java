@@ -47,7 +47,7 @@ public class FinancialTracker {
     public static void main(String[] args) {
         loadTransactions(FILE_NAME);
         Collections.reverse(transactions);
-        System.out.println(transactions);
+        //System.out.println(transactions);
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -221,8 +221,12 @@ public class FinancialTracker {
        Display helpers: show data in neat columns
        ------------------------------------------------------------------ */
     private static void displayLedger() {
-        columnView();//HELP
-        /* TODO – print all transactions in column format, newest first */ }
+        columnView();
+        for (int i = 0; i < transactions.size(); i++) {
+            System.out.println(transactions.get(i).toString());//HELP
+            /* TODO – print all transactions in column format, newest first */
+        }
+    }
 
     private static void displayDeposits() { /* TODO – only amount > 0               */
          for (int i = 0; i < transactions.size(); i++) {
@@ -303,11 +307,17 @@ public class FinancialTracker {
         return null;
     }
     private static void columnView() {
-        System.out.printf("%-20s|%-20s|%-50s|%-30s|%-20s", "Date", "Time", "Description", "Vendor", "Amount");
-        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------");
-        for (int i=0; i < transactions.size(); i++){
-            System.out.printf("%20s|%20s|%50s|%30s|%20.2f%n", transactions.get(i).getDate(), transactions.get(i).getTime(), transactions.get(i).getDescription(), transactions.get(i).getVendor(), transactions.get(i).getAmount());
-        }
+        System.out.printf("%-20s|%-20s|%-50s|%-30s|%-20s", "Date", "Time", "Description", "Vendor", "Amount" + "\n");
+        System.out.printf("%-140s", "---------------------------------------------------------------------------------------------------------------" + "\n");
+        System.out.println();
+
+/*
+//        System.out.printf("%-20s|%-20s|%-50s|%-30s|%-20s", "Date", "Time", "Description", "Vendor", "Amount");
+//        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------");
+//        for (int i=0; i < transactions.size(); i++){
+//            System.out.printf("%20s|%20s|%50s|%30s|%20.2f%n", transactions.get(i).getDate(), transactions.get(i).getTime(), transactions.get(i).getDescription(), transactions.get(i).getVendor(), transactions.get(i).getAmount());
+*/
+        //}
 
     }
 }
