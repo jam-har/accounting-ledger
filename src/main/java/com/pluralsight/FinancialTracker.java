@@ -5,7 +5,6 @@ import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -133,19 +132,25 @@ public class FinancialTracker {
         String description = scanner.nextLine();
         System.out.print("Enter the vendor:");
         String vendor = scanner.nextLine();
-        System.out.println("Enter amount to deposit:");
+        System.out.print("Enter amount to deposit:");
         Double amount = scanner.nextDouble();
-        if (!scanner.hasNextDouble() || amount < 0) {
+        System.out.println(amount);
+        // TODO have 2 decimals
+
+        if(amount.isNaN() || amount < 0) {
             System.out.println("Please enter positive numerical values only:");
+            // scanner.nextLine();
             amount = scanner.nextDouble();
         }
         scanner.nextLine();
+
         String date = String.valueOf(LocalDate.now());
         LocalTime now = LocalTime.now();
         String time = now.format(TIME_FMT);
         transactions.add(new Transaction(date, time, description, vendor, amount));
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount);
+        System.out.println(date + time);
+       try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount + "\n");
         } catch (Exception e) {
             System.out.println("Error");
         }
@@ -167,8 +172,9 @@ public class FinancialTracker {
         String vendor = scanner.nextLine();
         System.out.println("Enter amount to pay:");
         Double amount = scanner.nextDouble();
-        if (!scanner.hasNextDouble() || amount < 0) {
-            System.out.println("Please enter positive numerical values only: ");
+        if(amount.isNaN() || amount < 0) {
+            System.out.println("Please enter positive numerical values only:");
+            // scanner.nextLine();
             amount = scanner.nextDouble();
         }
         amount = amount * -1;
@@ -214,14 +220,17 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Display helpers: show data in neat columns
        ------------------------------------------------------------------ */
-    private static void displayLedger() { /* TODO – print all transactions in column format, newest first */ }
+    private static void displayLedger() {
+        columnView();//HELP
+        /* TODO – print all transactions in column format, newest first */ }
 
     private static void displayDeposits() { /* TODO – only amount > 0               */
-        for (int i = 0; i < transactions.size(); i++) {
+         for (int i = 0; i < transactions.size(); i++) {
             if (transactions.get(i).getAmount() > 0) {
-                System.out.println(transactions.get(i).toString());
+                System.out.println(transactions.get(i));
             }
         }
+
     }
 
     private static void displayPayments() { /* TODO – only amount < 0*/
@@ -292,5 +301,13 @@ public class FinancialTracker {
     private static Double parseDouble(String s) {
         /* TODO – return Double   or null */
         return null;
+    }
+    private static void columnView() {
+        System.out.printf("%-20s|%-20s|%-50s|%-30s|%-20s", "Date", "Time", "Description", "Vendor", "Amount");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------");
+        for (int i=0; i < transactions.size(); i++){
+            System.out.printf("%20s|%20s|%50s|%30s|%20.2f%n", transactions.get(i).getDate(), transactions.get(i).getTime(), transactions.get(i).getDescription(), transactions.get(i).getVendor(), transactions.get(i).getAmount());
+        }
+
     }
 }
