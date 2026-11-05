@@ -50,7 +50,6 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     public static void main(String[] args) {
         loadTransactions(FILE_NAME);
-        Collections.reverse(transactions);
         //System.out.println(transactions);
 
         Scanner scanner = new Scanner(System.in);
@@ -103,7 +102,7 @@ public class FinancialTracker {
                 LocalTime time = parseTime(tokens[1]);
                 description = tokens[2];
                 vendor = tokens[3];
-                amount = Double.parseDouble(tokens[4]);
+                amount = parseDouble(tokens[4]);
 
 
                 // every token is text: convert the number
@@ -186,14 +185,18 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     private static void displayLedger() {
         columnView();
+        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
         for (int i = 0; i < transactions.size(); i++) {
             System.out.println(transactions.get(i).toString());//HELP
             /* TODO – print all transactions in column format, newest first */
+
+
         }
     }
 
     private static void displayDeposits() { /* TODO – only amount > 0               */
-         for (int i = 0; i < transactions.size(); i++) {
+        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
+        for (int i = 0; i < transactions.size(); i++) {
             if (transactions.get(i).getAmount() > 0) {
                 System.out.println(transactions.get(i));
             }
@@ -202,6 +205,7 @@ public class FinancialTracker {
     }
 
     private static void displayPayments() { /* TODO – only amount < 0*/
+        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
         for (int i = 0; i < transactions.size(); i++) {
             if (transactions.get(i).getAmount() < 0) {
                 System.out.println(transactions.get(i));
