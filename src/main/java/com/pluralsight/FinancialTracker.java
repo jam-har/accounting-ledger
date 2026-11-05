@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import java.io.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -132,24 +131,10 @@ public class FinancialTracker {
      */
     private static void addDeposit(Scanner scanner) {
         // TODO]
-        System.out.println("Please enter the following information for your deposit: ");
-        System.out.print("Description (a few words about the transaction): ");
-       description = scanner.nextLine();
-        System.out.print("Enter the vendor: ");
-        vendor = scanner.nextLine();
-        System.out.print("Enter amount to deposit: ");
-        amount = scanner.nextDouble();
-        System.out.println(amount);
-        // TODO have 2 decimals
-
-        if(amount.isNaN() || amount < 0) {
-            System.out.println("Please enter positive numerical values only: ");
-            // scanner.nextLine();
-            amount = scanner.nextDouble();
-        }
+        depositPayment(scanner);
         scanner.nextLine();
         saveAttributes();
-
+        System.out.println("Thank you for your entry!");
 
 
     }
@@ -161,21 +146,13 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
-        System.out.println("Please enter the following information for your payment: ");
-        System.out.print("Description (a few words about the transaction): ");
-        String description = scanner.nextLine();
-        System.out.print("Enter the vendor (seller): ");
-        String vendor = scanner.nextLine();
-        System.out.println("Enter amount to pay: ");
-        amount = scanner.nextDouble();
-        if(amount.isNaN() || amount < 0) {
-            System.out.println("Please enter positive numerical values only: ");
-            // scanner.nextLine();
-            amount = scanner.nextDouble();
-        }
+        depositPayment(scanner);
         amount = amount * -1;
+        scanner.nextLine();
         saveAttributes();
+        System.out.println("Thank you for your entry!");
     }
+
 
     /* ------------------------------------------------------------------
        Ledger menu
@@ -323,4 +300,20 @@ public class FinancialTracker {
         }
         return;
     }
+    private static void depositPayment(Scanner scanner) {
+        System.out.println("Please enter the following information for your deposit: ");
+        System.out.print("Description (a few words about the transaction): ");
+        description = scanner.nextLine();
+        System.out.print("Enter the vendor: ");
+        vendor = scanner.nextLine();
+        System.out.print("Enter amount to deposit: ");
+        amount = scanner.nextDouble();
+        if(amount.isNaN() || amount < 0) {
+            System.out.println("Please enter positive numerical values only: ");
+            // scanner.nextLine();
+            amount = scanner.nextDouble();
+        }
+        return;
+    }
+
 }
