@@ -1,6 +1,8 @@
 package com.pluralsight;
 
+import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import java.io.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -39,6 +41,9 @@ public class FinancialTracker {
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern(TIME_PATTERN);
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern(DATETIME_PATTERN);
+    private static String description;
+    private static String vendor;
+    private static Double amount;
 
 
     /* ------------------------------------------------------------------
@@ -95,11 +100,11 @@ public class FinancialTracker {
             String csvLine;
             while ((csvLine = bufferedReader.readLine()) != null) {
                 String[] tokens = csvLine.split("\\|");//ArrayList<String> tokens = new A
-                String date = tokens[0]; //or tokens.set(o)
-                String time = tokens[1];
-                String description = tokens[2];
-                String vendor = tokens[3];
-                Double amount = Double.parseDouble(tokens[4]);
+                LocalDate date = parseDate(tokens[0]); //or tokens.set(o)
+                LocalTime time = parseTime(tokens[1]);
+                description = tokens[2];
+                vendor = tokens[3];
+                amount = Double.parseDouble(tokens[4]);
 
 
                 // every token is text: convert the number
@@ -127,33 +132,24 @@ public class FinancialTracker {
      */
     private static void addDeposit(Scanner scanner) {
         // TODO]
-        System.out.println("Please enter the following information for your deposit:");
+        System.out.println("Please enter the following information for your deposit: ");
         System.out.print("Description (a few words about the transaction): ");
-        String description = scanner.nextLine();
-        System.out.print("Enter the vendor:");
-        String vendor = scanner.nextLine();
-        System.out.print("Enter amount to deposit:");
-        Double amount = scanner.nextDouble();
+       description = scanner.nextLine();
+        System.out.print("Enter the vendor: ");
+        vendor = scanner.nextLine();
+        System.out.print("Enter amount to deposit: ");
+        amount = scanner.nextDouble();
         System.out.println(amount);
         // TODO have 2 decimals
 
         if(amount.isNaN() || amount < 0) {
-            System.out.println("Please enter positive numerical values only:");
+            System.out.println("Please enter positive numerical values only: ");
             // scanner.nextLine();
             amount = scanner.nextDouble();
         }
         scanner.nextLine();
+        saveAttributes();
 
-        String date = String.valueOf(LocalDate.now());
-        LocalTime now = LocalTime.now();
-        String time = now.format(TIME_FMT);
-        transactions.add(new Transaction(date, time, description, vendor, amount));
-        System.out.println(date + time);
-       try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount + "\n");
-        } catch (Exception e) {
-            System.out.println("Error");
-        }
 
 
     }
@@ -165,29 +161,20 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
-        System.out.println("Please enter the following information for your payment:");
-        System.out.print("Description (a few words about the transaction):");
+        System.out.println("Please enter the following information for your payment: ");
+        System.out.print("Description (a few words about the transaction): ");
         String description = scanner.nextLine();
-        System.out.print("Enter the vendor (seller):");
+        System.out.print("Enter the vendor (seller): ");
         String vendor = scanner.nextLine();
-        System.out.println("Enter amount to pay:");
-        Double amount = scanner.nextDouble();
+        System.out.println("Enter amount to pay: ");
+        amount = scanner.nextDouble();
         if(amount.isNaN() || amount < 0) {
-            System.out.println("Please enter positive numerical values only:");
+            System.out.println("Please enter positive numerical values only: ");
             // scanner.nextLine();
             amount = scanner.nextDouble();
         }
         amount = amount * -1;
-        String date = String.valueOf(LocalDate.now());
-        LocalTime now = LocalTime.now();
-        String time = now.format(TIME_FMT);
-        transactions.add(new Transaction(date, time, description, vendor, amount));
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            writer.write(date + "|" + time + "|" + description + "|" + vendor + "|" + amount);
-        } catch (Exception e) {
-            System.out.println("Error");
-        }
-
+        saveAttributes();
     }
 
     /* ------------------------------------------------------------------
@@ -297,9 +284,11 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     private static LocalDate parseDate(String s) {
         /* TODO – return LocalDate or null */
-        //LocalDateTime timeLogged = LocalDateTime.now();
-        //s = timeLogged.format(DATETIME_FMT);
-        return LocalDate.now();
+        return LocalDate.parse(s, DATE_FMT);
+    }
+    private static LocalTime parseTime(String s) {
+        /* TODO – return LocalDate or null */
+        return LocalTime.parse(s, TIME_FMT);
     }
 
     private static Double parseDouble(String s) {
@@ -319,5 +308,19 @@ public class FinancialTracker {
 */
         //}
 
+    }
+    private static void saveAttributes() {
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+        String d = date.format(DATE_FMT);
+        String t = time.format(TIME_FMT);
+        String printFormat = String.format("%s|%s|%s|%s|%.2f", d, t, description, vendor, amount);
+        transactions.add(new Transaction(date, time, description, vendor, amount));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(printFormat + "\n");
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+        return;
     }
 }
