@@ -247,9 +247,25 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Reporting helpers
        ------------------------------------------------------------------ */
+    private static void monthToDate(Scanner scanner) {
+
+    }
     private static void filterTransactionsByDate(LocalDate start, LocalDate end) {
         // TODO – iterate transactions, print those within the range
+        //if(todayDate.after(historyDate) && todayDate.before(futureDate)) {
+        //    // In between
+        //}
+        for (int i = 0; i < transactions.size(); i++) {
+            if (transactions.get(i).getDate().isAfter(start) && transactions.get(i).getDate().isBefore(end)) {
+                System.out.println(transactions.get(i));
+            }
+//
+//     for (Product product : inventory) {
+//            if (product.getPrice() >= minPrice && product.getPrice() <= maxPrice) {
+//                System.out.println(product);
+        }
     }
+
 
     private static void filterTransactionsByVendor(String vendor) {
         // TODO – iterate transactions, print those with matching vendor
