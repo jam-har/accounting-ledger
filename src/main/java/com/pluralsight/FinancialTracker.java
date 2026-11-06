@@ -40,9 +40,9 @@ public class FinancialTracker {
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern(TIME_PATTERN);
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern(DATETIME_PATTERN);
-    private static String description;
-    private static String vendor;
-    private static Double amount;
+   // private static String description;
+   // private static String vendor;
+   // private static Double amount;
 
 
     /* ------------------------------------------------------------------
@@ -100,9 +100,9 @@ public class FinancialTracker {
                 String[] tokens = csvLine.split("\\|");//ArrayList<String> tokens = new A
                 LocalDate date = parseDate(tokens[0]); //or tokens.set(o)
                 LocalTime time = parseTime(tokens[1]);
-                description = tokens[2];
-                vendor = tokens[3];
-                amount = parseDouble(tokens[4]);
+                String description = tokens[2];
+                 String  vendor = tokens[3];
+               Double amount = parseDouble(tokens[4]);
 
 
                 // every token is text: convert the number
@@ -130,9 +130,9 @@ public class FinancialTracker {
      */
     private static void addDeposit(Scanner scanner) {
         // TODO]
-        depositPayment(scanner);
+        Transaction transaction = getTransactionDetails(scanner);
         scanner.nextLine();
-        saveAttributes();
+        saveAttributes(transaction);
         System.out.println("Thank you for your entry!");
 
 
@@ -145,10 +145,10 @@ public class FinancialTracker {
      */
     private static void addPayment(Scanner scanner) {
         // TODO
-        depositPayment(scanner);
-        amount = amount * -1;
+        Transaction paymentTransaction = getTransactionDetails(scanner);
+        paymentTransaction.setAmount(paymentTransaction.getAmount() * -1);
         scanner.nextLine();
-        saveAttributes();
+        saveAttributes(paymentTransaction);
         System.out.println("Thank you for your entry!");
     }
 
@@ -157,6 +157,8 @@ public class FinancialTracker {
        Ledger menu
        ------------------------------------------------------------------ */
     private static void ledgerMenu(Scanner scanner) {
+        transactions.sort(Comparator.comparing(Transaction::getDate).thenComparing(Transaction::getTime).reversed());
+
         boolean running = true;
         while (running) {
             System.out.println("Ledger");
@@ -185,30 +187,34 @@ public class FinancialTracker {
        ------------------------------------------------------------------ */
     private static void displayLedger() {
         columnView();
-        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
-        for (int i = 0; i < transactions.size(); i++) {
-            System.out.println(transactions.get(i).toString());//HELP
-            /* TODO – print all transactions in column format, newest first */
+//
+//        for (int i = 0; i < transactions.size(); i++) {
+//            System.out.println(transactions.get(i).toString());//HELP
+//            /* TODO – print all transactions in column format, newest first */
+//        }
 
+     //   transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
 
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction);
         }
     }
 
     private static void displayDeposits() { /* TODO – only amount > 0               */
-        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
-        for (int i = 0; i < transactions.size(); i++) {
-            if (transactions.get(i).getAmount() > 0) {
-                System.out.println(transactions.get(i));
+     //   transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() > 0) {
+                System.out.println(transaction);
             }
         }
 
     }
 
     private static void displayPayments() { /* TODO – only amount < 0*/
-        transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
-        for (int i = 0; i < transactions.size(); i++) {
-            if (transactions.get(i).getAmount() < 0) {
-                System.out.println(transactions.get(i));
+     //   transactions.sort(Comparator.comparing(Transaction::getDate).reversed());
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() < 0) {
+                System.out.println(transaction);
             }
         }
     }
@@ -217,6 +223,8 @@ public class FinancialTracker {
        Reports menu
        ------------------------------------------------------------------ */
     private static void reportsMenu(Scanner scanner) {
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now();
         boolean running = true;
         while (running) {
             System.out.println("Reports");
@@ -232,8 +240,16 @@ public class FinancialTracker {
             String input = scanner.nextLine().trim();
 
             switch (input) {
-                case "1" -> {/* TODO – month-to-date report */ }
-                case "2" -> {/* TODO – previous month report */ }
+                case "1" -> {
+                    start = start.withDayOfMonth(1);
+                    filterTransactionsByDate(start, end);
+                    /* TODO – month-to-date report */
+                }
+                case "2" -> {/* TODO – previous month report */
+                    start = start.minusMonths(1).withDayOfMonth(1);
+                    end = end.minusMonths(1).withDayOfMonth(end.minusMonths(1).lengthOfMonth());
+                    filterTransactionsByDate(start,end);
+                }
                 case "3" -> {/* TODO – year-to-date report   */ }
                 case "4" -> {/* TODO – previous year report  */ }
                 case "5" -> {/* TODO – prompt for vendor then report */ }
@@ -247,17 +263,22 @@ public class FinancialTracker {
     /* ------------------------------------------------------------------
        Reporting helpers
        ------------------------------------------------------------------ */
-    private static void monthToDate(Scanner scanner) {
 
-    }
+
+
+
     private static void filterTransactionsByDate(LocalDate start, LocalDate end) {
         // TODO – iterate transactions, print those within the range
         //if(todayDate.after(historyDate) && todayDate.before(futureDate)) {
         //    // In between
         //}
-        for (int i = 0; i < transactions.size(); i++) {
-            if (transactions.get(i).getDate().isAfter(start) && transactions.get(i).getDate().isBefore(end)) {
-                System.out.println(transactions.get(i));
+        for (Transaction transaction: transactions) {
+
+            if (transaction.getDate().equals(start) || transaction.getDate().isAfter(start)) {
+                if(transaction.getDate().isBefore(end) || transaction.getDate().equals(end)){
+                    System.out.println(transaction);
+                }
+
             }
 //
 //     for (Product product : inventory) {
@@ -290,11 +311,12 @@ public class FinancialTracker {
 
     private static Double parseDouble(String s) {
         /* TODO – return Double   or null */
-        return null;
+
+        return Double.parseDouble(s);
     }
     private static void columnView() {
         System.out.printf("%-20s|%-20s|%-50s|%-30s|%-20s", "Date", "Time", "Description", "Vendor", "Amount" + "\n");
-        System.out.printf("%-140s", "---------------------------------------------------------------------------------------------------------------" + "\n");
+        System.out.printf("%-100s", "---------------------------------------------------------------------------------------------------------------" + "\n");
         System.out.println();
 
 /*
@@ -306,13 +328,15 @@ public class FinancialTracker {
         //}
 
     }
-    private static void saveAttributes() {
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
-        String d = date.format(DATE_FMT);
-        String t = time.format(TIME_FMT);
-        String printFormat = String.format("%s|%s|%s|%s|%.2f", d, t, description, vendor, amount);
-        transactions.add(new Transaction(date, time, description, vendor, amount));
+    private static void saveAttributes(Transaction transaction) {
+
+        String d = transaction.getDate().format(DATE_FMT);
+        String t = transaction.getTime().format(TIME_FMT);
+
+        String printFormat = String.format("%s|%s|%s|%s|%.2f", d, t, transaction.getDescription(),
+                transaction.getVendor(), transaction.getAmount());
+
+        transactions.add(transaction);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
             writer.write(printFormat + "\n");
         } catch (Exception e) {
@@ -320,20 +344,31 @@ public class FinancialTracker {
         }
         return;
     }
-    private static void depositPayment(Scanner scanner) {
-        System.out.println("Please enter the following information for your deposit: ");
+    private static Transaction getTransactionDetails(Scanner scanner) {
+
+        //get the current date and time for the transaction
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+        // begin asking the user for transaction details
+        System.out.println("Please enter the following information:");
         System.out.print("Description (a few words about the transaction): ");
-        description = scanner.nextLine();
+       String description = scanner.nextLine();
         System.out.print("Enter the vendor: ");
-        vendor = scanner.nextLine();
+        String vendor = scanner.nextLine();
         System.out.print("Enter amount to deposit: ");
-        amount = scanner.nextDouble();
+        Double amount = scanner.nextDouble();
         if(amount.isNaN() || amount < 0) {
             System.out.println("Please enter positive numerical values only: ");
             // scanner.nextLine();
             amount = scanner.nextDouble();
         }
-        return;
+
+        //once we've collected all the transaction details
+        //we can build and return our transaction
+
+
+        return new Transaction(date,time,description,vendor,amount);
     }
 
 }
