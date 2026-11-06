@@ -234,7 +234,7 @@ public class FinancialTracker {
             System.out.println("3) Year To Date");
             System.out.println("4) Previous Year");
             System.out.println("5) Search by Vendor");
-            System.out.println("6) Custom Search");
+            //System.out.println("6) Custom Search");
             System.out.println("0) Back");
 
             String input = scanner.nextLine().trim();
@@ -250,10 +250,21 @@ public class FinancialTracker {
                     end = end.minusMonths(1).withDayOfMonth(end.minusMonths(1).lengthOfMonth());
                     filterTransactionsByDate(start,end);
                 }
-                case "3" -> {/* TODO – year-to-date report   */ }
-                case "4" -> {/* TODO – previous year report  */ }
-                case "5" -> {/* TODO – prompt for vendor then report */ }
-                case "6" -> customSearch(scanner);
+                case "3" -> {/* TODO – year-to-date report   */
+                    start = start.withDayOfYear(1);
+                    filterTransactionsByDate(start, end);
+                }
+                case "4" -> {/* TODO – previous year report  */
+                    start = start.minusYears(1).withDayOfYear(1);
+                    end = end.minusYears(1).withDayOfYear(end.minusYears(1).lengthOfYear());
+                    filterTransactionsByDate(start, end);
+                }
+                case "5" -> {/* TODO – prompt for vendor then report */
+                    System.out.println("Enter vendor: ");
+                    String vendor = scanner.nextLine();
+                    filterTransactionsByVendor(vendor);
+                }
+                //case "6" -> customSearch(scanner);
                 case "0" -> running = false;
                 default -> System.out.println("Invalid option");
             }
@@ -272,30 +283,44 @@ public class FinancialTracker {
         //if(todayDate.after(historyDate) && todayDate.before(futureDate)) {
         //    // In between
         //}
-        for (Transaction transaction: transactions) {
+            boolean results = false;
 
-            if (transaction.getDate().equals(start) || transaction.getDate().isAfter(start)) {
-                if(transaction.getDate().isBefore(end) || transaction.getDate().equals(end)){
-                    System.out.println(transaction);
+            for (Transaction transaction: transactions) {
+
+                if (transaction.getDate().equals(start) || transaction.getDate().isAfter(start)) {
+                    if (transaction.getDate().isBefore(end) || transaction.getDate().equals(end)) {
+                        System.out.println(transaction);
+                        results = true;
+                    }
+
                 }
-
             }
-//
-//     for (Product product : inventory) {
-//            if (product.getPrice() >= minPrice && product.getPrice() <= maxPrice) {
-//                System.out.println(product);
-        }
+            if (!results) {
+                System.out.println("No match found");
+            } return;
+
     }
 
 
     private static void filterTransactionsByVendor(String vendor) {
         // TODO – iterate transactions, print those with matching vendor
+        boolean results = false;
+        for (Transaction transaction : transactions) {
+            if (transaction.getVendor().equalsIgnoreCase(vendor)) {
+                System.out.println(transaction);
+                results = true;
+                }
+        }
+        if (!results) {
+            System.out.println("No match found");
+        } return;
+
     }
 
-    private static void customSearch(Scanner scanner) {
-        // TODO – prompt for any combination of date range, description,
-        //        vendor, and exact amount, then display matches
-    }
+//    private static void customSearch(Scanner scanner) {
+//        // TODO – prompt for any combination of date range, description,
+//        //        vendor, and exact amount, then display matches
+//    }
 
     /* ------------------------------------------------------------------
        Utility parsers (you can reuse in many places)
